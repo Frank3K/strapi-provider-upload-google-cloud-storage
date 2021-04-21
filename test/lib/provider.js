@@ -462,6 +462,7 @@ describe('/lib/provider.js', () => {
               'file buffer information',
               {
                 contentType: 'image/jpeg',
+                gzip: 'auto',
                 metadata: {
                   contentDisposition: 'inline; filename="people coding.JPEG"',
                 },
@@ -535,6 +536,7 @@ describe('/lib/provider.js', () => {
               'file buffer information',
               {
                 contentType: 'image/jpeg',
+                gzip: 'auto',
                 metadata: {
                   contentDisposition: 'inline; filename="people coding.JPEG"',
                 },
