@@ -462,6 +462,7 @@ describe('/lib/provider.js', () => {
             const saveExpectedArgs = [
               'file buffer information',
               {
+                gzip: 'auto',
                 contentType: 'image/jpeg',
                 metadata: {
                   contentDisposition: 'inline; filename="people coding.JPEG"',
@@ -538,6 +539,52 @@ describe('/lib/provider.js', () => {
                 const extension = file.ext.toLowerCase().substring(1);
                 return `${extension}/${slugify(path.parse(file.name).name)}-${hash}.${extension}`;
               },
+            };
+            const providerInstance = provider.init(config);
+            await providerInstance.upload(fileData);
+            assert.equal(assertionsCount, 6);
+            mockRequire.stop('@google-cloud/storage');
+          });
+
+          it('must save file with custom metadata', async () => {
+            const saveExpectedArgs = [
+              'file buffer information',
+              {
+                gzip: 'auto',
+                contentType: 'image/jpeg',
+                metadata: {
+                  cacheControl: 'public, max-age=604800',
+                  contentLanguage: 'en-US',
+                  contentDisposition: 'attachment; filename="people coding.JPEG"',
+                },
+                public: true,
+              },
+            ];
+
+            const fileMock = createFileMock({ saveExpectedArgs });
+            const expectedFileNames = ['/tmp/strapi/4l0ngH45h.jpeg', '/tmp/strapi/4l0ngH45h.jpeg'];
+            const bucketMock = createBucketMock({ fileMock, expectedFileNames });
+            const Storage = class {
+              bucket(bucketName) {
+                assertionsCount += 1;
+                assert.equal(bucketName, 'any bucket');
+                return bucketMock;
+              }
+            };
+            mockRequire('@google-cloud/storage', { Storage });
+            const provider = mockRequire.reRequire('../../lib/provider');
+            const config = {
+              serviceAccount: {
+                project_id: '123',
+                client_email: 'my@email.org',
+                private_key: 'a random key',
+              },
+              bucketName: 'any bucket',
+              metadata: (file) => ({
+                cacheControl: `public, max-age=${60 * 60 * 24 * 7}`, // One week
+                contentLanguage: 'en-US',
+                contentDisposition: `attachment; filename="${file.name}"`,
+              }),
             };
             const providerInstance = provider.init(config);
             await providerInstance.upload(fileData);
