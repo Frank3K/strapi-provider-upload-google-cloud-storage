@@ -165,6 +165,30 @@ Boolean to define uniform access, when uniform bucket-level access is enabled
 - Default value : `false`
 - Optional
 
+### `metadata`:
+
+Function that is executed to compute the metadata for a file when it is uploaded. 
+
+When no function is provided, the following metadata is used:
+
+```js
+{
+  contentDisposition: `inline; filename="${file.name}"`,
+}
+```
+
+Example:
+
+```js
+  metadata: (file) => ({
+    cacheControl: `public, max-age=${60 * 60 * 24 * 7}`, // One week
+    contentLanguage: 'en-US',
+    contentDisposition: `attachment; filename="${file.name}"`,
+  }),
+```
+
+The available properties can be found in the [Cloud Storage JSON API documentation](https://cloud.google.com/storage/docs/json_api/v1/objects/insert#request_properties_JSON).
+
 ### `generateUploadFileName`:
 
 Function that is executed to generate the name of the uploaded file. This method can give more control over the file name and can for example be used to include a custom hashing function or dynamic path.
