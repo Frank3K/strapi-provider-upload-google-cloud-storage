@@ -161,8 +161,15 @@ Boolean to define a public attribute to file when it upload to storage.
 
 #### `uniform`:
 
-Boolean to define uniform access, when uniform bucket-level access is enabled
+Boolean to define uniform access, when uniform bucket-level access is enabled.
 - Default value : `false`
+- Optional
+
+#### `gzip`:
+
+Value to define if files are uploaded and stored with gzip compression.
+- Possible values: `true`, `false`, `auto`
+- Default value : `auto`
 - Optional
 
 ### `metadata`:
